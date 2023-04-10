@@ -3,6 +3,7 @@ const { Telegraf } = require('telegraf');
 const axios = require('axios');
 const { Configuration, OpenAIApi } = require('openai');
 const { chatGPT } = require('./utils');
+const googleTTS = require('google-tts-api');
 
 //Conf .env
 require('dotenv').config();
@@ -85,10 +86,17 @@ bot.command('receta', async (ctx) => {
 
     const elaboracion = await chatGPT(`Dame los pasos a seguir de la receta: ${titulo}`);
 
-    console.log('Respuesta chatGPT:', titulo);
-    console.log('Respuesta chatGPT:', elaboracion);
-    ctx.reply(titulo);
-    ctx.reply(elaboracion);
+    //Transformar el titulo a audio.
+    const audioURL = googleTTS.getAudioUrl(titulo, {
+      lang: 'es',
+      slow: false,
+      host: 'https://translate.google.es'
+    });
+    //Para respetar el orden de ejecucion en promesas async, hacerlas esperar a todas await
+    await ctx.reply(titulo);
+    await ctx.reply(elaboracion);
+    await ctx.reply(audioURL);
+
   } catch (err) {
     ctx.reply(err.message);
   }
