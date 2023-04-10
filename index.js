@@ -110,7 +110,7 @@ bot.on('message', async (ctx) => {
     messages: [
       {
         role: 'assistant',
-        content: `Eres sancho panza del Quijote y debes responderle al quijote sus preguntas `
+        content: `Eres un bot de telegram muy eficiente`
       },
       {
         role: 'user',
