@@ -29,15 +29,8 @@ bot.command('test', async (ctx) => {
 
 async function getWeather(ciudad) {
   try {
-    // const { data } = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=${process.env.API_KEY}&units=metric`);
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=${process.env.API_KEY}&units=metric`);
-
     const data = await response.json();
-    // console.log('temp', data.main.temp);
-    // console.log('temp_max', data.main.temp_min);
-    // console.log('temp_min', data.main.temp_max);
-    // console.log('humidity', data.main.humidity);
-    console.log('Data', data);
     const {
       main: { temp, temp_min, temp_max, humidity },
       coord: { lon, lat }
@@ -57,15 +50,10 @@ async function getWeather(ciudad) {
     return { fail: err.message }
   }
 }
-
-//temp_actual,temp_max,temp_min,humedad
 bot.command('tiempo', async (ctx) => {
 
   const ciudad = ctx.message.text.slice(8);
   const tiempo = await getWeather(ciudad);
-
-  console.log('El tiempo', tiempo);
-
   ctx.reply(`El tiempo en: ${ciudad}`);
   ctx.reply(`Temperatura: ${tiempo.temp}`);
   ctx.reply(`Temperatura máxima ${tiempo.temp_min}`);
@@ -74,16 +62,12 @@ bot.command('tiempo', async (ctx) => {
   ctx.reply(`Longitud: ${tiempo.lon}`);
   ctx.reply(`Latidtud: ${tiempo.lat}`);
   ctx.replyWithLocation(tiempo.lat, tiempo.lon);
-  //console.log('Slice', ctx.message.text.slice(8));
 });
 
 bot.command('receta', async (ctx) => {
   try {
     const ingredientes = ctx.message.text.substring(7).trim();
-    console.log('Ingredientes', ingredientes);
-
     const titulo = await chatGPT(`Dame el titulo de una receta que pueda concinar con los siguientes ingredientes: ${ingredientes}`);
-
     const elaboracion = await chatGPT(`Dame los pasos a seguir de la receta: ${titulo}`);
 
     //Transformar el titulo a audio.
@@ -125,8 +109,6 @@ bot.on('message', async (ctx) => {
         content: `Respondeme en menos de 200 caracteres a la pregunta: ${ctx.message.text}`
       }]
   });
-
-  console.log(completion.data.choices[0].message.content);
   ctx.reply(completion.data.choices[0].message.content);
 });
 
